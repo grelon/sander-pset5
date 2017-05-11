@@ -12,14 +12,14 @@ import java.util.List;
 public class TodoList<Todo> extends ArrayList {
     private String id;
     private String title;
-    private List<Todo> list;
+    private ArrayList<Todo> list;
 
-    public TodoList(String title, List<Todo> list) {
+    public TodoList(String title, ArrayList<Todo> list) {
         this.title = title;
         this.list = list;
     }
 
-    public TodoList(String title, List<Todo> list, String id) {
+    public TodoList(String title, ArrayList<Todo> list, String id) {
         this.title = title;
         this.list = list;
         this.id = id;
@@ -44,11 +44,20 @@ public class TodoList<Todo> extends ArrayList {
         this.title = title;
     }
 
-    public List<Todo> getList() {
+    public ArrayList<Todo> getList() {
         return list;
     }
 
-    public void setList(List<Todo> list) {
+    public void setList(ArrayList<Todo> list) {
         this.list = list;
+    }
+
+    @Override
+    public String toString() {
+        return "TodoList{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", list=" + list.toString() +
+                '}';
     }
 }

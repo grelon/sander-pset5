@@ -19,6 +19,9 @@ public class Todo {
         this.checked = checked;
     }
 
+    public Todo() {
+    }
+
     public String getDescription() {
         return description;
     }
@@ -57,5 +60,16 @@ public class Todo {
 
     public void setList_id(int list_id) {
         this.list_id = list_id;
+    }
+
+    @Override
+    public String toString() {
+        return "Todo{" +
+                "id=" + id +
+                ", list_id=" + list_id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", checked=" + checked +
+                '}';
     }
 }
