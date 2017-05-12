@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Todo Lists</string>
+    <string name="app_name">sander-pset5</string>
+    <string name="main_title">Todo Lists</string>
 </resources>

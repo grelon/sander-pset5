@@ -13,7 +13,8 @@ public class Todo {
     private String description;
     private int checked;
 
-    public Todo(String title, String description, int checked) {
+    public Todo(int list_id, String title, String description, int checked) {
+        this.list_id = list_id;
         this.title = title;
         this.description = description;
         this.checked = checked;

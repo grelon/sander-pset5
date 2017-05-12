@@ -9,8 +9,8 @@ import java.util.List;
  * Defines todolist class
  */
 
-public class TodoList<Todo> extends ArrayList {
-    private String id;
+public class TodoList {
+    private int id;
     private String title;
     private ArrayList<Todo> list;
 
@@ -19,7 +19,7 @@ public class TodoList<Todo> extends ArrayList {
         this.list = list;
     }
 
-    public TodoList(String title, ArrayList<Todo> list, String id) {
+    public TodoList(String title, ArrayList<Todo> list, int id) {
         this.title = title;
         this.list = list;
         this.id = id;
@@ -28,11 +28,11 @@ public class TodoList<Todo> extends ArrayList {
     public TodoList() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    private void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -52,12 +52,4 @@ public class TodoList<Todo> extends ArrayList {
         this.list = list;
     }
 
-    @Override
-    public String toString() {
-        return "TodoList{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", list=" + list.toString() +
-                '}';
-    }
 }
