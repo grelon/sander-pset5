@@ -43,23 +43,6 @@ public class MainActivity extends AppCompatActivity {
         lvLists = (ListView) findViewById(R.id.lvMainLists);
         etMain = (EditText) findViewById(R.id.mainEditText);
 
-        // testing: create test todolists
-//        Todo test_todo1 = new Todo(1, "Testtitle", 0);
-//        db.createTodo(test_todo1);
-//        ArrayList<Todo> test_todos = new ArrayList<>();
-//        test_todos.add(test_todo1);
-//        TodoList test_list = new TodoList("TestTitle", test_todos);
-//        Log.d("log", "Main.onCreate: test_list: " + test_list.getList().toString());
-//        db.createList(test_list);
-
-
-//        // testing
-//        lists = db.readLists();
-//        Log.d("log", "Database: ");
-//        for (TodoList list: lists) {
-//            Log.d("log", list.getList().toString());
-//        }
-
         // update list with todolists
         updateList();
         Log.d("log", "Main.onCreate: updateList() success");
