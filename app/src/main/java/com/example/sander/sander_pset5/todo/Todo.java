@@ -1,34 +1,34 @@
 package com.example.sander.sander_pset5.todo;
 
+import java.io.Serializable;
+
 /**
  * Created by sander on 11-5-17.
  *
  * Defines a todo
  */
 
-public class Todo {
+public class Todo implements Serializable{
     private int id;
     private int list_id;
-    private String title;
-    private String description;
+    private String text;
     private int checked;
 
-    public Todo(int list_id, String title, String description, int checked) {
+    public Todo(int list_id, String text, int checked) {
         this.list_id = list_id;
-        this.title = title;
-        this.description = description;
+        this.text = text;
         this.checked = checked;
     }
 
     public Todo() {
     }
 
-    public String getDescription() {
-        return description;
+    public String getText() {
+        return text;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public int getChecked() {
@@ -37,14 +37,6 @@ public class Todo {
 
     public void setChecked(int checked) {
         this.checked = checked;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public int getId() {
@@ -68,8 +60,7 @@ public class Todo {
         return "Todo{" +
                 "id=" + id +
                 ", list_id=" + list_id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
+                ", text='" + text + '\'' +
                 ", checked=" + checked +
                 '}';
     }

@@ -1,5 +1,6 @@
 package com.example.sander.sander_pset5.todo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * Defines todolist class
  */
 
-public class TodoList {
+public class TodoList implements Serializable {
     private int id;
     private String title;
     private ArrayList<Todo> list;

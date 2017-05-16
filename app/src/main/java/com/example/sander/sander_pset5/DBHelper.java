@@ -5,13 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.sander.sander_pset5.todo.Todo;
 import com.example.sander.sander_pset5.todo.TodoList;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by sander on 11-5-17.
@@ -41,17 +39,15 @@ class DBHelper extends SQLiteOpenHelper {
     // column names
     private static final String TODO_ID = "_id";
     private static final String TODO_LIST = "list_id";
-    private static final String TODO_TITLE = "title";
-    private static final String TODO_DESCRIPTION = "description";
+    private static final String TODO_TEXT = "text";
     private static final String TODO_CHECKED = "checked";
 
     // table creation query
     private static final String CREATE_TODO_TABLE =
             "CREATE TABLE " + TABLE_TODOS + " ( " +
-                    TODO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    TODO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     TODO_LIST + " INTEGER NOT NULL, " +
-                    TODO_TITLE + " TEXT NOT NULL, " +
-                    TODO_DESCRIPTION + " TEXT, " +
+                    TODO_TEXT + " TEXT, " +
                     TODO_CHECKED + " INTEGER NOT NULL);";
 
 
@@ -113,14 +109,13 @@ class DBHelper extends SQLiteOpenHelper {
     public void createTodo(Todo todo) {
         // insert values into database
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DBHelper.LIST_ID, todo.getList_id());
-        contentValues.put(DBHelper.TODO_TITLE, todo.getTitle());
-        contentValues.put(DBHelper.TODO_DESCRIPTION, todo.getDescription());
-        contentValues.put(DBHelper.TODO_CHECKED, todo.getChecked());
+        contentValues.put(DBHelper.TODO_LIST, todo.getList_id());
+        contentValues.put(DBHelper.TODO_TEXT, todo.getText());
+        contentValues.put(DBHelper.TODO_CHECKED, 0);
         db.insert(DBHelper.TABLE_TODOS, null, contentValues);
     }
 
-    private ArrayList<Todo> readTodos() {
+    private ArrayList<Todo> readTodos(int list_id) {
         // create arraylist we can fill with todos
         ArrayList<Todo> todos = new ArrayList<>();
 
@@ -128,33 +123,24 @@ class DBHelper extends SQLiteOpenHelper {
         String[] columns = new String[] {
                 DBHelper.TODO_ID,
                 DBHelper.TODO_LIST,
-                DBHelper.TODO_TITLE,
-                DBHelper.TODO_DESCRIPTION,
+                DBHelper.TODO_TEXT,
                 DBHelper.TODO_CHECKED};
 
         // create cursor object filled with previously defined columns
-        Cursor cursor = db.query(DBHelper.TABLE_TODOS, columns, null, null, null, null, null);
-        Log.d("log", "readTodos(): cursor created");
-        if (cursor != null) {Log.d("log", "cursor != null");}
-
+        Cursor cursor = db.query(DBHelper.TABLE_TODOS, null, DBHelper.TODO_LIST + " = ?",
+                new String[] {String.valueOf(list_id)}, null, null, null);
 
         // move over rows in cursor,
         if (cursor.moveToFirst()) {
-            Log.d("log", "if (cursor.moveToFirst()): passed");
             do {
-                Log.d("log", "do {: passed");
                 // initialize todo-object
                 Todo todo = new Todo();
 
                 // set attributes
                 todo.setId(cursor.getInt(cursor.getColumnIndex(DBHelper.TODO_ID)));
                 todo.setList_id(cursor.getInt(cursor.getColumnIndex(DBHelper.TODO_LIST)));
-                todo.setTitle(cursor.getString(cursor.getColumnIndex(DBHelper.TODO_TITLE)));
-                todo.setDescription(cursor.getString(cursor.getColumnIndex(DBHelper.TODO_DESCRIPTION)));
+                todo.setText(cursor.getString(cursor.getColumnIndex(DBHelper.TODO_TEXT)));
                 todo.setChecked(cursor.getInt(cursor.getColumnIndex(DBHelper.TODO_CHECKED)));
-
-                // testing
-                Log.d("log", "todo.getTitle()" + todo.getTitle());
 
                 // create todo object from received data
                 todos.add(todo);
@@ -169,15 +155,14 @@ class DBHelper extends SQLiteOpenHelper {
     public int updateTodo(Todo todo) {
         // update values and return exit code
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DBHelper.TODO_TITLE, todo.getTitle());
-        contentValues.put(DBHelper.TODO_DESCRIPTION, todo.getDescription());
+        contentValues.put(DBHelper.TODO_TEXT, todo.getText());
         contentValues.put(DBHelper.TODO_CHECKED, todo.getChecked());
 
         return db.update(DBHelper.TABLE_TODOS, contentValues, DBHelper.TODO_ID + " = ?",
                 new String[] {String.valueOf(todo.getId())});
     }
 
-    public void delete(Todo todo) {
+    public void deleteTodo(Todo todo) {
         // delete todo from database
         db.delete(DBHelper.TABLE_TODOS, DBHelper.TODO_ID + " = ?",
                 new String[] {String.valueOf(todo.getId())});
@@ -189,10 +174,10 @@ class DBHelper extends SQLiteOpenHelper {
      */
 
     public void createList(TodoList list) {
-        // insert values into database
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DBHelper.LIST_TITLE, list.getTitle());
-        db.insert(DBHelper.TABLE_LISTS, null, contentValues);
+        // insert list values into database
+        ContentValues listValues = new ContentValues();
+        listValues.put(DBHelper.LIST_TITLE, list.getTitle());
+        db.insert(DBHelper.TABLE_LISTS, null, listValues);
     }
 
     public ArrayList<TodoList> readLists() {
@@ -207,6 +192,7 @@ class DBHelper extends SQLiteOpenHelper {
         // create cursor object filled with previously defined columns
         Cursor cursor = db.query(DBHelper.TABLE_LISTS, columns, null, null, null, null, null);
 
+
         // move over rows in cursor,
         if (cursor.moveToFirst()) {
             do {
@@ -218,8 +204,7 @@ class DBHelper extends SQLiteOpenHelper {
                 list.setTitle(cursor.getString(cursor.getColumnIndex(DBHelper.LIST_TITLE)));
 
                 // get todos for this list from todo table
-                Log.d("log", "DBHelper.readLists() list.getID(): " + list.getId());
-                list.setList(readTodos());
+                list.setList(readTodos(list.getId()));
 
                 // add list to array of lists
                 lists.add(list);
@@ -250,5 +235,4 @@ class DBHelper extends SQLiteOpenHelper {
         db.delete(DBHelper.TABLE_TODOS, DBHelper.TODO_LIST + " = ?",
                 new String[] {String.valueOf(list.getId())});
     }
-
 }

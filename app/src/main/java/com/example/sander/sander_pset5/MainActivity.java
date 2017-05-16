@@ -1,11 +1,14 @@
 package com.example.sander.sander_pset5;
 
-
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.sander.sander_pset5.todo.Todo;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     ListView lvLists;
+    EditText etMain;
     ArrayAdapter todoListArrayAdapter;
     ArrayList<String> listTitles;
     ArrayList<TodoList> lists;
@@ -37,32 +41,27 @@ public class MainActivity extends AppCompatActivity {
 
         // get views
         lvLists = (ListView) findViewById(R.id.lvMainLists);
+        etMain = (EditText) findViewById(R.id.mainEditText);
 
         // testing: create test todolists
-//        Todo test_todo = new Todo(0, "Testtitle", "Testdescription", 0);
+//        Todo test_todo1 = new Todo(1, "Testtitle", 0);
+//        db.createTodo(test_todo1);
 //        ArrayList<Todo> test_todos = new ArrayList<>();
-//        test_todos.add(test_todo);
-//        Log.d("log", "Main.onCreate: test_todos(todo): " + test_todos.get(0).getTitle());
+//        test_todos.add(test_todo1);
 //        TodoList test_list = new TodoList("TestTitle", test_todos);
+//        Log.d("log", "Main.onCreate: test_list: " + test_list.getList().toString());
 //        db.createList(test_list);
 
-        // testing
-        Log.d("log", "Database: ");
-        lists = db.readLists();
 
-        for (TodoList list: lists) {
-            // Log.d("log", "List title:");
-            ArrayList<Todo> todolist = list.getList();
-            if (todolist == null) {
-                Log.d("log", "todolist is null");
-            }
-            for (Todo todo : todolist) {
-                Log.d("log", "Todo (ID: " + todo.getId() +") title:" + todo.getTitle());
-            }
-        }
+//        // testing
+//        lists = db.readLists();
+//        Log.d("log", "Database: ");
+//        for (TodoList list: lists) {
+//            Log.d("log", list.getList().toString());
+//        }
 
         // update list with todolists
-//        updateList();
+        updateList();
         Log.d("log", "Main.onCreate: updateList() success");
 
     }
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        db.close();
+        db.close(); // unreachable
         Log.d("log", "Main.onDestroy: db.close() success");
     }
 
@@ -84,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
         // store titles of lists
         listTitles = new ArrayList<>();
-        for (int i = 0; i < lists.size(); i++) {
-            listTitles.add(lists.get(i).getTitle());
+        for (TodoList list : lists) {
+            listTitles.add(list.getTitle());
         }
 
         // create adapter for lvLists
@@ -94,5 +93,56 @@ public class MainActivity extends AppCompatActivity {
 
         // set adapter to lvLists
         lvLists.setAdapter(todoListArrayAdapter);
+
+        setListListeners();
+    }
+
+    private void setListListeners() {
+        lvLists.setOnItemClickListener(new simpleListListener());
+        lvLists.setOnItemLongClickListener( new longListListener());
+    }
+
+    public void createList(View view) {
+        Log.d("log", "createList clicked");
+
+        // creates list when clicked
+        TodoList list = new TodoList();
+
+        Log.d("log", "et text:" + etMain.getText().toString());
+        list.setTitle(etMain.getText().toString());
+        db.createList(list);
+
+
+        // wrap up
+        etMain.getText().clear();
+        updateList();
+    }
+
+    private class simpleListListener implements android.widget.AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            // start SingleListActivity
+
+            Intent singleListIntent = new Intent(getApplicationContext(), SingleListActivity.class);
+            singleListIntent.putExtra("list", lists.get(position));
+            startActivity(singleListIntent);
+        }
+    }
+
+    private class longListListener implements AdapterView.OnItemLongClickListener {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            // delete list from db
+            db.getInstance(getApplicationContext());
+            db.deleteList(lists.get(position));
+
+            // delete todos from db
+            for (Todo todo: lists.get(position).getList()) {db.deleteTodo(todo);}
+
+            // update listview
+            updateList();
+
+            return true;
+        }
     }
 }

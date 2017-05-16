@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">sander-pset5</string>
-    <string name="main_title">Todo Lists</string>
+    <string name="main_title">Many Lists</string>
+    <string name="singleListTitle">Single List</string>
+    <string name="singleListHint">What do you need to do?</string>
+    <string name="add">Add</string>
+
 </resources>
